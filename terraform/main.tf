@@ -1,15 +1,15 @@
 
 # Specify the GCP Provider
 provider "google" {
-    credentials = file("gcp-credentials.json")
-    project     = var.project_id
-    region      = var.region
+  project     = var.project_id
+  region      = var.region
+  credentials = var.google_credentials
 }
 
 # Create a GCS Bucket
 resource "google_storage_bucket" "aus_rental_bucket" {
-    name     = var.aus_rental_bucket
-    location = var.region
+  name     = var.aus_rental_bucket
+  location = var.region
 }
 
 resource "google_bigquery_dataset" "dataset" {
