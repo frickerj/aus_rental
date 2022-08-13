@@ -1,4 +1,2 @@
-terraform/gcp-credentials.json
-terraform/terraform.tfvars
 .terraform
 .terraform.lock.hcl
