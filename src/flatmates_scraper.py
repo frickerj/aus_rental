@@ -5,6 +5,7 @@ from datetime import datetime
 import time
 from bs4 import BeautifulSoup
 import requests
+from google.cloud import storage
 
 
 labels = [
@@ -142,12 +143,14 @@ class GetFlatmatesData:
             print("percentage complete: ", (i / (pages) * 100))
         return dict_arr
 
-    def write_house_data_to_csv(self, house_data):
-        """write house data to csv"""
+    def write_house_data_to_gcs(self, house_data):
+        """write house data to gcs bucket"""
         date_formatted = date.today().strftime("%Y_%m_%d")
-        output_folder_location = "output"
-        self.write_dict_to_csv(
-            f"{output_folder_location}/raw_{date_formatted}.csv", house_data
+        client = storage.Client()
+        bucket = client.get_bucket("aus-rental-listings-bucket")
+
+        bucket.blob("raw_{date_formatted}.csv").upload_from_string(
+            house_data.to_csv(), "text/csv"
         )
 
 
@@ -188,7 +191,7 @@ def main():
             flatmates_data.scrape_all_flatmates_info(base_url + "?page=", num_pages)
         )
 
-    flatmates_data.write_house_data_to_csv(all_listings)
+    flatmates_data.write_house_data_to_gcs(all_listings)
 
 
 if __name__ == "__main__":
