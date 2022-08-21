@@ -61,17 +61,7 @@ resource "google_cloud_run_service" "default" {
   ]
 }
 
-resource "google_project_service" "scheduler_api" {
-  project                    = var.project_id
-  service                    = "scheduler.googleapis.com"
-  disable_dependent_services = true
-}
 
-resource "google_project_service" "run_api" {
-  project                    = var.project_id
-  service                    = "run.googleapis.com"
-  disable_dependent_services = true
-}
 
 resource "google_project_service" "iam_api" {
   project                    = var.project_id
@@ -85,10 +75,7 @@ resource "google_service_account" "default" {
   description  = "Cloud Scheduler service account; used to trigger scheduled Cloud Run jobs."
   display_name = "scheduler-sa"
 
-  # Use an explicit depends_on clause to wait until API is enabled
-  depends_on = [
-    google_project_service.iam_api
-  ]
+
 }
 
 resource "google_cloud_scheduler_job" "default" {
@@ -111,10 +98,6 @@ resource "google_cloud_scheduler_job" "default" {
     }
   }
 
-  # Use an explicit depends_on clause to wait until API is enabled
-  depends_on = [
-    google_project_service.scheduler_api
-  ]
 }
 
 resource "google_service_account" "sa" {
