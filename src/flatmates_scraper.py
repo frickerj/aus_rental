@@ -6,7 +6,7 @@ import time
 from bs4 import BeautifulSoup
 import requests
 from google.cloud import storage
-
+import pandas as pd
 
 labels = [
     "flatmates_id",
@@ -148,9 +148,9 @@ class GetFlatmatesData:
         date_formatted = date.today().strftime("%Y_%m_%d")
         client = storage.Client()
         bucket = client.get_bucket("aus-rental-listings-bucket")
-
-        bucket.blob("raw_{date_formatted}.csv").upload_from_string(
-            house_data.to_csv(), "text/csv"
+        house_data_df = pd.DataFrame(house_data)
+        bucket.blob(f"raw_{date_formatted}.csv").upload_from_string(
+            house_data_df.to_csv(), "text/csv"
         )
 
 
@@ -186,6 +186,7 @@ def main():
     for city in cities:
         base_url = "https://flatmates.com.au/rooms/" + city + "/newest"
         num_pages = get_flatmates_max_page(base_url)
+        num_pages = 1
         print(f"scraping {city} with {num_pages} pages")
         all_listings.append(
             flatmates_data.scrape_all_flatmates_info(base_url + "?page=", num_pages)
