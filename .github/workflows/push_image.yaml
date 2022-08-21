@@ -25,4 +25,6 @@ jobs:
     - name: Build the Docker image # push The image to the docker hub
       run: docker build . --file Dockerfile.aus_rental --tag $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
     - name: Docker Push
-      run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+      run: |
+        set -x
+        docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
