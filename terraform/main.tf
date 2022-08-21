@@ -12,6 +12,11 @@ resource "google_storage_bucket" "aus_rental_bucket" {
   location = var.region
 }
 
+resource "google_storage_bucket" "cloudbuild_logs_bucket" {
+  name     = var.aus_rental_bucket
+  location = var.region
+}
+
 resource "google_bigquery_dataset" "dataset" {
   dataset_id                  = "aus_rental_data"
   friendly_name               = "aus_rental_data"

@@ -1,5 +1,6 @@
 steps:
 - name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "eu.gcr.io/$PROJECT_ID/aus_rental:$COMMIT_SHA", "."]
+  args: ["build", "-t", "asia.gcr.io/$PROJECT_ID/aus_rental:$COMMIT_SHA", "."]
 - name: "gcr.io/cloud-builders/docker"
-  args: ["push", "eu.gcr.io/$PROJECT_ID/aus_rental:$COMMIT_SHA"]
+  args: ["push", "asia.gcr.io/$PROJECT_ID/aus_rental:$COMMIT_SHA"]
+logsBucket: 'gs://cloudbuild_logs_bucket'
