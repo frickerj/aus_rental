@@ -1,4 +1,4 @@
-name: This a workflow title
+name: Docker Build and Push
 on:
   push:
     branches:
