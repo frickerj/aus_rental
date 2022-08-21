@@ -49,6 +49,8 @@ on:
     branches:
     - "main"
   pull_request:
+    paths:
+      - 'terraform/**'
 
 permissions:
   contents: read
