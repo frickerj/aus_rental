@@ -2,3 +2,6 @@
 .terraform.lock.hcl
 __pycache__
 .coverage
+*.pyc
+.pytest_cache
+.vscode

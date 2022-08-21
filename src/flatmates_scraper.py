@@ -5,7 +5,8 @@ from datetime import datetime
 import time
 from bs4 import BeautifulSoup
 import requests
-
+from google.cloud import storage
+import pandas as pd
 
 labels = [
     "flatmates_id",
@@ -142,12 +143,14 @@ class GetFlatmatesData:
             print("percentage complete: ", (i / (pages) * 100))
         return dict_arr
 
-    def write_house_data_to_csv(self, house_data):
-        """write house data to csv"""
+    def write_house_data_to_gcs(self, house_data):
+        """write house data to gcs bucket"""
         date_formatted = date.today().strftime("%Y_%m_%d")
-        output_folder_location = "output"
-        self.write_dict_to_csv(
-            f"{output_folder_location}/raw_{date_formatted}.csv", house_data
+        client = storage.Client()
+        bucket = client.get_bucket("aus-rental-listings-bucket")
+        house_data_df = pd.DataFrame(house_data)
+        bucket.blob(f"raw_{date_formatted}.csv").upload_from_string(
+            house_data_df.to_csv(), "text/csv"
         )
 
 
@@ -183,12 +186,13 @@ def main():
     for city in cities:
         base_url = "https://flatmates.com.au/rooms/" + city + "/newest"
         num_pages = get_flatmates_max_page(base_url)
+        num_pages = 1
         print(f"scraping {city} with {num_pages} pages")
         all_listings.append(
             flatmates_data.scrape_all_flatmates_info(base_url + "?page=", num_pages)
         )
 
-    flatmates_data.write_house_data_to_csv(all_listings)
+    flatmates_data.write_house_data_to_gcs(all_listings)
 
 
 if __name__ == "__main__":
