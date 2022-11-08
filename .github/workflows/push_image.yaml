@@ -4,6 +4,11 @@ on:
     branches:
     - "main"
   pull_request:
+    paths: [
+      "Dockerfile*",
+      "src/**",
+      ".github/workflows/push_image.yaml"
+    ]
 
 # Env variables
 env:
