@@ -42,22 +42,61 @@ resource "google_bigquery_table" "aus_rental_table" {
   }
 }
 
-
-resource "google_project_service" "gcp_resource_manager_api" {
-  project = var.project_id
-  service = "cloudresourcemanager.googleapis.com"
-}
+<<<<<<< Updated upstream
+=======
 
 resource "google_container_registry" "registry" {
   project  = var.project_id
   location = "ASIA"
 }
 
-resource "google_cloudbuild_trigger" "filename-trigger" {
-  trigger_template {
-    branch_name = "main"
-    repo_name   = "aus_rental"
+resource "google_cloud_run_service" "run_service" {
+  name     = "aus_rental_scraping"
+  location = var.region
+  template {
+    spec {
+      containers {
+        image = "gcr.io/google-samples/hello-app:2.0"
+      }
+    }
+  }
+>>>>>>> Stashed changes
+
+}
+
+resource "google_service_account" "default" {
+  account_id   = "scheduler-sa"
+  description  = "Cloud Scheduler service account; used to trigger scheduled Cloud Run jobs."
+  display_name = "scheduler-sa"
+
+  # Use an explicit depends_on clause to wait until API is enabled
+  depends_on = [
+    google_project_service.iam_api
+  ]
+}
+
+resource "google_cloud_scheduler_job" "default" {
+  name             = "scheduled-cloud-run-job"
+  description      = "Invoke a Cloud Run container on a schedule."
+  schedule         = "0 0 * * 6" # midnight on Saturday
+  time_zone        = "Australia/Melbourne"
+  attempt_deadline = "320s"
+
+  retry_config {
+    retry_count = 1
   }
 
-  filename = "cloudbuild.yaml"
+  http_target {
+    http_method = "POST"
+    uri         = google_cloud_run_service.run_service.status[0].url
+
+    oidc_token {
+      service_account_email = google_service_account.default.email
+    }
+  }
+
+  # Use an explicit depends_on clause to wait until API is enabled
+  depends_on = [
+    google_project_service.scheduler_api
+  ]
 }
