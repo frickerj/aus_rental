@@ -12,10 +12,10 @@ resource "google_storage_bucket" "aus_rental_bucket" {
   location = var.region
 }
 
-resource "google_storage_bucket" "cloudbuild_logs_bucket" {
-  name     = var.aus_rental_bucket
-  location = var.region
-}
+# resource "google_storage_bucket" "cloudbuild_logs_bucket" {
+#   name     = var.aus_rental_bucket
+#   location = var.region
+# }
 
 resource "google_bigquery_dataset" "dataset" {
   dataset_id                  = "aus_rental_data"
@@ -59,16 +59,16 @@ resource "google_container_registry" "registry" {
 #   }
 # }
 
-# resource "google_service_account" "default" {
-#   account_id   = "scheduler-sa"
-#   description  = "Cloud Scheduler service account; used to trigger scheduled Cloud Run jobs."
-#   display_name = "scheduler-sa"
+resource "google_service_account" "default" {
+  account_id   = "scheduler-sa"
+  description  = "Cloud Scheduler service account; used to trigger scheduled Cloud Run jobs."
+  display_name = "scheduler-sa"
 
-#   # Use an explicit depends_on clause to wait until API is enabled
-#   depends_on = [
-#     google_project_service.iam_api
-#   ]
-# }
+  # Use an explicit depends_on clause to wait until API is enabled
+  depends_on = [
+    google_project_service.iam_api
+  ]
+}
 
 # resource "google_cloud_scheduler_job" "default" {
 #   name             = "scheduled-cloud-run-job"
