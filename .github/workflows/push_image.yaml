@@ -6,7 +6,8 @@ on:
   pull_request:
     paths: [
       "Dockerfile*",
-      "src/**"
+      "src/**",
+      ".github/workflows/push_image.yaml"
     ]
 
 # Env variables
