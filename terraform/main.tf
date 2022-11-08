@@ -23,7 +23,6 @@ resource "google_bigquery_dataset" "dataset" {
   description                 = "BQ for Rental data in GCS"
   location                    = var.region
   default_table_expiration_ms = 3600000
-
 }
 
 
@@ -40,6 +39,12 @@ resource "google_bigquery_table" "aus_rental_table" {
       "gs://${var.aus_rental_bucket}/*.csv",
     ]
   }
+}
+
+resource "google_project_service" "run_api" {
+  service = "run.googleapis.com"
+
+  disable_on_destroy = true
 }
 
 
